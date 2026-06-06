@@ -6,6 +6,7 @@ from driver.input_manager import InputManager
 import time
 from structures.dataclasses import PressEvent, SwipeEvent
 from application.timer_event import TimerEvent
+from widgets.renderer import Renderer
 
 class Application:
     def __init__(self, framebuffer_path: Path = constants.FRAMEBUFFER_PATH, refresh_interval_s: float = 0.05) -> None:
@@ -13,6 +14,7 @@ class Application:
         self.widgets : list[Widget] = []
         self.timers: list[TimerEvent] = []
         self.display = Display(framebuffer_path=framebuffer_path)
+        self.renderer = Renderer(self.display)
         self.input_manager = InputManager()
         self.input_manager.start()
         self.refresh_interval_s = refresh_interval_s
@@ -40,8 +42,10 @@ class Application:
 
         for timer in self.timers:
             timer.check()
-
+        
         for widget in self.widgets:
             if widget.rerender:
-                widget.render()
+                widget.render(self.renderer)
                 widget.rerender = False
+
+        self.renderer.update()
