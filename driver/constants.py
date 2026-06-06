@@ -1,6 +1,6 @@
 from pathlib import Path
 
-INPUT_DEVICE_PATH = Path("dev/input/event0")
+INPUT_DEVICE_PATH = Path("/dev/input/event0")
 
 FRAMEBUFFER_GRAPHICS_PATH = Path("/sys/class/graphics/fb1/")
 FRAMEBUFFER_PATH = Path("/dev/fb1")
