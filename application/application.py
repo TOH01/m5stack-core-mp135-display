@@ -4,6 +4,7 @@ import driver.constants as constants
 from driver.display import Display
 from typing import Callable
 from driver.input_manager import InputManager
+import time
 
 class Application:
     def __init__(self, framebuffer_path: Path = constants.FRAMEBUFFER_PATH) -> None:
@@ -20,15 +21,14 @@ class Application:
     def register_timer(self, interval: int, callback: Callable):
         pass
 
-    def execute(self) -> None:
-        if self.stop:
-            return
-        
+    def main_loop(self) -> None:
+        while not self.stop:
+            self._execute()
+            time.sleep(0.1)
+
+    def _execute(self) -> None:
         self.input_manager.poll()
 
         for widget in self.widgets:
             if widget.rerender:
                 widget.render()
-
-        self.execute()
-        
