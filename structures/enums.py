@@ -9,3 +9,12 @@ class Direction(Enum):
     DOWN = "down"
     LEFT = "left"
     RIGHT = "right"
+
+class TextPreset(Enum):
+    HEADING = "heading"
+    BODY = "body"
+
+class TextAlignment(Enum):
+    LEFT = "left"
+    CENTER = "center"
+    RIGHT = "right"

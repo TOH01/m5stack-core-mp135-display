@@ -69,6 +69,11 @@ class Display:
         self.framebuffer.close()
         self.f.close()
 
-    def draw_row(self, offset: int, data: bytes):
-        self.framebuffer[offset : offset + len(data)] = data
+    def draw_region(self, x: int, y: int, w: int, h: int, data: bytes) -> None:
+        bytes_per_pixel = self.bpp // 8
+        row_size = w * bytes_per_pixel
+        for row in range(h):
+            offset = ((y + row) * self.width + x) * bytes_per_pixel
+            data_offset = row * row_size
+            self.framebuffer[offset : offset + row_size] = data[data_offset : data_offset + row_size]
     
