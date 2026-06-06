@@ -1,0 +1,26 @@
+[tool.ruff]
+target-version = "py310"
+line-length = 100
+
+
+[tool.ruff.lint]
+# Select rulesets:
+# F: Pyflakes (syntax, undefined names, unused imports)
+# E, W: pycodestyle (PEP8 formatting and style checks)
+# I: isort (clean and sorted import statements)
+# B: flake8-bugbear (common design pitfalls & bug-prone patterns)
+select = ["F", "E", "W", "I", "B"]
+ignore = ["E501"]
+
+[tool.ruff.lint.isort]
+combine-as-imports = true
+known-first-party = ["driver"]
+
+
+[tool.pyright]
+include = ["driver"]
+exclude = ["**/__pycache__", "**/node_modules", "**/.*]
+reportMissingImports = "warning"
+reportMissingTypeStubs = false
+pythonVersion = "3.10"
+pythonPlatform = "Linux"
