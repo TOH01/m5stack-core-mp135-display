@@ -2,6 +2,9 @@ from threading import Thread
 from evdev import InputDevice, ecodes
 from collections import deque
 import driver.constants as constants
+from structures.dataclasses import Point, SwipeEvent, PressEvent
+from structures.enums import TouchEvent
+import driver.utils as utils
 
 class InputManager:
     def __init__(self, device_path=constants.INPUT_DEVICE_PATH, swipe_threshold=30) -> None:
@@ -12,11 +15,44 @@ class InputManager:
     def start(self) -> None:
         Thread(target=self._run, daemon=True).start()
 
-    def poll(self) -> None:
-        pass
+    def poll(self) -> SwipeEvent | PressEvent | None:
+        if self.events:
+            return self.events.popleft()
+        return None
+
+    def add_to_queue(self, up: Point, down: Point) -> None:
+        if utils.get_distance(up, down) < self.swipe_threshold:
+            self.events.append(PressEvent(Point(up.x, up.y)))
+        else:
+            direction = utils.get_swipe_direction(down, up)
+            self.events.append(SwipeEvent(direction))
 
     def _run(self):
+        down_point = Point(-1, -1)
+        up_point = Point(-1, -1)
+        temp_x, temp_y = -1, -1
+        temp_touch_event = None
+        start_drag = False
+        
         for e in self.device.read_loop():
-            print(e.type)
-            print(e.code)
-            print(e.value)
+            
+            if e.type == ecodes.EV_ABS:
+                if e.code == ecodes.ABS_MT_POSITION_X:
+                    temp_x = e.value
+                if e.code == ecodes.ABS_MT_POSITION_Y:
+                    temp_y = e.value
+
+            elif e.type == ecodes.EV_KEY:
+                if e.code == ecodes.BTN_TOUCH:
+                    temp_touch_event = e.value
+
+            elif e.type == ecodes.EV_SYN and e.code == ecodes.SYN_REPORT:
+                if temp_touch_event == TouchEvent.UP and temp_x >= 0 and temp_y >= 0:
+                    start_drag = False
+                    up_point.x = temp_x
+                    up_point.y = temp_y
+                    self.add_to_queue(up_point, down_point)
+                if temp_touch_event == TouchEvent.DOWN and temp_x >= 0 and temp_y >= 0 and not start_drag:
+                    start_drag = True
+                    down_point.x = temp_x
+                    down_point.y = temp_y

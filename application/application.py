@@ -27,7 +27,7 @@ class Application:
             time.sleep(0.1)
 
     def _execute(self) -> None:
-        self.input_manager.poll()
+        print(self.input_manager.poll())
 
         for widget in self.widgets:
             if widget.rerender:

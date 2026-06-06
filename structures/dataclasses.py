@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from structures.enums import Direction
 
 @dataclass
 class Rect:
@@ -11,3 +12,11 @@ class Rect:
 class Point:
     x: int
     y: int
+
+@dataclass
+class PressEvent:
+    points: Point
+
+@dataclass
+class SwipeEvent:
+    directon: Direction
