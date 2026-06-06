@@ -2,7 +2,6 @@ from widgets.widget import Widget
 from pathlib import Path
 import driver.constants as constants
 from driver.display import Display
-from typing import Callable
 from driver.input_manager import InputManager
 import time
 from structures.dataclasses import PressEvent, SwipeEvent
@@ -21,8 +20,8 @@ class Application:
     def register_widget(self, widget: Widget) -> None:
         self.widgets.append(widget)
 
-    def register_timer(self, interval_ms: int, callback: Callable):
-        self.timers.append(TimerEvent(interval_ms, callback))
+    def register_timer(self, timer: TimerEvent):
+        self.timers.append(timer)
 
     def main_loop(self) -> None:
         while not self.stop:

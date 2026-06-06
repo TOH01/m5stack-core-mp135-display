@@ -7,6 +7,9 @@ class TimerEvent:
         self.callback = callback
         self.last_time_ms = time.monotonic_ns() // 1_000_000
 
+    def reset(self) -> None:
+        self.last_time_ms = time.monotonic_ns() // 1_000_000
+    
     def check(self) -> None:
         current_time_ms = time.monotonic_ns() // 1_000_000
 
