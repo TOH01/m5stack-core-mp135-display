@@ -1,5 +1,6 @@
 from structures.dataclasses import Rect
+from widgets.widget import Widget
 
-class Container:
+class Container(Widget):
     def __init__(self, rect: Rect) -> None:
-        self.rect = rect
+        super().__init__(rect)

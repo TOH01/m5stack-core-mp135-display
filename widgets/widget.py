@@ -1,4 +1,4 @@
-from structures.dataclasses import Rect, Point
+from structures.dataclasses import Rect, Point, PressEvent, SwipeEvent
 from widgets.utils import is_inside
 
 class Widget:
@@ -12,8 +12,8 @@ class Widget:
     def render(self) -> None:
         pass
 
-    def on_click(self) -> None:
+    def on_click(self, event: PressEvent) -> None:
         pass
 
-    def on_swipe(self) -> None:
+    def on_swipe(self, event: SwipeEvent) -> None:
         pass
