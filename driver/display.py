@@ -72,7 +72,7 @@ class Display:
         self.framebuffer.close()
         self.f.close()
 
-    def draw_region(self, rect: Rect, data: bytes) -> None:
+    def draw_region(self, rect: Rect, data: bytes | bytearray) -> None:
         bytes_per_pixel = self.bpp // 8
         row_size = rect.w * bytes_per_pixel
         for row in range(rect.h):
