@@ -1,4 +1,4 @@
-from structures.dataclasses import Point, PressEvent, Rect, SwipeEvent
+from structures.dataclasses import Point, PressEvent, Rect
 from widgets.renderer import Renderer
 from widgets.utils import is_inside
 
@@ -8,6 +8,7 @@ class Widget:
         self.rect = rect
         self.rerender = True
         self.parent: Widget | None = None
+        self.visible = True
 
     def get_rect(self) -> Rect:
         rect = Rect(self.rect.x, self.rect.y, self.rect.w, self.rect.h)
@@ -25,7 +26,4 @@ class Widget:
         pass
 
     def on_click(self, event: PressEvent) -> None:
-        pass
-
-    def on_swipe(self, event: SwipeEvent) -> None:
         pass

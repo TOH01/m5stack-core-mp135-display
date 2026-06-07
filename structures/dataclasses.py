@@ -60,7 +60,7 @@ class LineStyle:
 
 @dataclass
 class PressEvent:
-    points: Point
+    point: Point
 
 
 @dataclass
