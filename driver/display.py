@@ -1,7 +1,10 @@
+import mmap
 from pathlib import Path
+
 import driver.constants as constants
 import driver.utils as utils
-import mmap
+from structures.dataclasses import Rect
+
 
 class Display:
     def __init__(self, framebuffer_path=constants.FRAMEBUFFER_PATH) -> None:
@@ -18,7 +21,7 @@ class Display:
             return path.read_text().strip()
         except OSError:
             return None
-        
+
     def _write_text(self, path: Path, content: str) -> None:
         try:
             path.write_text(content)
@@ -47,7 +50,7 @@ class Display:
                 pass
 
         return constants.BITS_PER_PIXEL
-    
+
     def get_brightness(self) -> int:
         raw = self._read_text(constants.BRIGHTNESS_PATH)
 
@@ -69,11 +72,12 @@ class Display:
         self.framebuffer.close()
         self.f.close()
 
-    def draw_region(self, x: int, y: int, w: int, h: int, data: bytes) -> None:
+    def draw_region(self, rect: Rect, data: bytes) -> None:
         bytes_per_pixel = self.bpp // 8
-        row_size = w * bytes_per_pixel
-        for row in range(h):
-            offset = ((y + row) * self.width + x) * bytes_per_pixel
+        row_size = rect.w * bytes_per_pixel
+        for row in range(rect.h):
+            offset = ((rect.y + row) * self.width + rect.x) * bytes_per_pixel
             data_offset = row * row_size
-            self.framebuffer[offset : offset + row_size] = data[data_offset : data_offset + row_size]
-    
+            self.framebuffer[offset : offset + row_size] = data[
+                data_offset : data_offset + row_size
+            ]

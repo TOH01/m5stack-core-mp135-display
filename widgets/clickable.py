@@ -1,6 +1,8 @@
+from typing import Callable
+
 from structures.dataclasses import PressEvent, Rect
 from widgets.widget import Widget
-from typing import Callable
+
 
 class Clickable(Widget):
     def __init__(self, rect: Rect, callback: Callable) -> None:

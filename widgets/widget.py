@@ -1,6 +1,7 @@
-from structures.dataclasses import Rect, Point, PressEvent, SwipeEvent
-from widgets.utils import is_inside
+from structures.dataclasses import Point, PressEvent, Rect, SwipeEvent
 from widgets.renderer import Renderer
+from widgets.utils import is_inside
+
 
 class Widget:
     def __init__(self, rect: Rect) -> None:
@@ -17,9 +18,9 @@ class Widget:
 
         return rect
 
-    def contains(self, point : Point) -> bool:
+    def contains(self, point: Point) -> bool:
         return is_inside(point, self.get_rect())
-    
+
     def render(self, renderer: Renderer) -> None:
         pass
 

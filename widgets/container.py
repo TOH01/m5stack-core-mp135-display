@@ -1,6 +1,7 @@
-from structures.dataclasses import Rect, PressEvent, SwipeEvent
+from structures.dataclasses import PressEvent, Rect, SwipeEvent
 from widgets.renderer import Renderer
 from widgets.widget import Widget
+
 
 class Container(Widget):
     def __init__(self, rect: Rect) -> None:

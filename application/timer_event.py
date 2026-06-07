@@ -1,5 +1,6 @@
-from typing import Callable
 import time
+from typing import Callable
+
 
 class TimerEvent:
     def __init__(self, interval_ms: int, callback: Callable) -> None:
@@ -9,7 +10,7 @@ class TimerEvent:
 
     def reset(self) -> None:
         self.last_time_ms = time.monotonic_ns() // 1_000_000
-    
+
     def check(self) -> None:
         current_time_ms = time.monotonic_ns() // 1_000_000
 

@@ -1,21 +1,19 @@
-from widgets.widget import Widget
-from pathlib import Path
-import driver.constants as constants
-from driver.display import Display
-from driver.input_manager import InputManager
 import time
-from structures.dataclasses import PressEvent, SwipeEvent
+
 from application.timer_event import TimerEvent
+from structures.dataclasses import PressEvent, SwipeEvent
 from widgets.renderer import Renderer
+from widgets.widget import Widget
+
 
 class Application:
-    def __init__(self, framebuffer_path: Path = constants.FRAMEBUFFER_PATH, refresh_interval_s: float = 0.05) -> None:
+    def __init__(self, display, input_manager, refresh_interval_s: float = 0.05) -> None:
         self.stop = False
-        self.widgets : list[Widget] = []
+        self.widgets: list[Widget] = []
         self.timers: list[TimerEvent] = []
-        self.display = Display(framebuffer_path=framebuffer_path)
+        self.display = display
         self.renderer = Renderer(self.display)
-        self.input_manager = InputManager()
+        self.input_manager = input_manager
         self.input_manager.start()
         self.refresh_interval_s = refresh_interval_s
 
@@ -42,7 +40,7 @@ class Application:
 
         for timer in self.timers:
             timer.check()
-        
+
         for widget in self.widgets:
             if widget.rerender:
                 widget.render(self.renderer)

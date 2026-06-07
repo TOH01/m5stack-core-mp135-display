@@ -1,12 +1,18 @@
-from driver.display import Display
+from pathlib import Path
+
 from PIL import Image, ImageDraw, ImageFont
-from structures.dataclasses import Rect, Point, RectStyle, TextStyle, CircleStyle, LineStyle
-from structures.enums import TextPreset, TextAlignment
+
+from driver.display import Display
+from structures.dataclasses import CircleStyle, LineStyle, Point, Rect, RectStyle, TextStyle
+from structures.enums import TextAlignment, TextPreset
+
+FONT_DIR = Path(__file__).parent.parent / "fonts"
 
 FONT_MAP = {
-    TextPreset.HEADING: ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf", 13),
-    TextPreset.BODY: ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf", 11),
+    TextPreset.HEADING: ImageFont.truetype(str(FONT_DIR / "DejaVuSans-Bold.ttf"), 13),
+    TextPreset.BODY: ImageFont.truetype(str(FONT_DIR / "DejaVuSans.ttf"), 11),
 }
+
 
 class Renderer:
     def __init__(self, display: Display) -> None:
@@ -18,17 +24,23 @@ class Renderer:
     def draw_rect(self, rect: Rect, style: RectStyle) -> None:
         self.draw.rounded_rectangle(
             (rect.x, rect.y, rect.x + rect.w, rect.y + rect.h),
-            radius=style.radius, fill=style.fill,
-            outline=style.outline, width=style.outline_width
+            radius=style.radius,
+            fill=style.fill,
+            outline=style.outline,
+            width=style.outline_width,
         )
         self.dirty_regions.append(rect)
 
     def draw_circle(self, center: Point, radius: int, style: CircleStyle) -> None:
         self.draw.ellipse(
             (center.x - radius, center.y - radius, center.x + radius, center.y + radius),
-            fill=style.fill, outline=style.outline, width=style.outline_width
+            fill=style.fill,
+            outline=style.outline,
+            width=style.outline_width,
         )
-        self.dirty_regions.append(Rect(center.x - radius, center.y - radius, radius * 2, radius * 2))
+        self.dirty_regions.append(
+            Rect(center.x - radius, center.y - radius, radius * 2, radius * 2)
+        )
 
     def draw_line(self, start: Point, end: Point, style: LineStyle) -> None:
         self.draw.line((start.x, start.y, end.x, end.y), fill=style.color, width=style.width)
@@ -68,5 +80,5 @@ class Renderer:
             for i in range(0, len(raw), 3):
                 r, g, b = raw[i], raw[i + 1], raw[i + 2]
                 buf += ((r & 0xF8) << 8 | (g & 0xFC) << 3 | (b >> 3)).to_bytes(2, "little")
-            self.display.draw_region(rect.x, rect.y, rect.w, rect.h, buf)
+            self.display.draw_region(rect, buf)
         self.dirty_regions.clear()
