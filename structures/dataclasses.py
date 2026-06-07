@@ -20,6 +20,11 @@ class RectStyle:
 
 
 @dataclass
+class ContainerStyle:
+    background: RectStyle
+
+
+@dataclass
 class TextStyle:
     color: tuple[int, int, int]
     preset: TextPreset
