@@ -14,7 +14,6 @@ class Application:
         self, display: Display, input_manager: InputManager, refresh_interval_s: float = 0.05
     ) -> None:
         self.stop = False
-        self.timers: list[TimerEvent] = []
         self.display = display
         self.renderer = Renderer(self.display)
         self.input_manager = input_manager
@@ -30,7 +29,7 @@ class Application:
         self.root.add_widget(widget)
 
     def register_timer(self, timer: TimerEvent):
-        self.timers.append(timer)
+        self.root.add_timer(timer)
 
     def set_background(self, color):
         self.root.style.background.fill = color
@@ -57,8 +56,7 @@ class Application:
             if self.swipe_callback:
                 self.swipe_callback(input_event)
 
-        for timer in self.timers:
-            timer.check()
+        self.root.check_timers()
 
         self.root.render(self.renderer)
 

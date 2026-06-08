@@ -10,12 +10,18 @@ class Label(Widget):
         self.style = style
 
     def render(self, renderer: Renderer) -> None:
-        rect = self.get_rect()
-        renderer.draw_rect(rect, RectStyle(fill=self.style.bg))
-        renderer.draw_text(
-            rect,
-            self.text,
-            TextStyle(
-                color=self.style.color, preset=self.style.preset, alignment=self.style.alignment
-            ),
-        )
+        if self.rerender:
+            rect = self.get_rect()
+            renderer.draw_rect(rect, RectStyle(fill=self.style.bg))
+            renderer.draw_text(
+                rect,
+                self.text,
+                TextStyle(
+                    color=self.style.color, preset=self.style.preset, alignment=self.style.alignment
+                ),
+            )
+            self.rerender = False
+
+    def update_text(self, text: str):
+        self.text = text
+        self.rerender = True

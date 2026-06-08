@@ -2,6 +2,8 @@ from application.application import Application
 from application.timer_event import TimerEvent
 from driver.display import Display
 from driver.input_manager import InputManager
+from widgets.bottom_bar import BottomBar
+from widgets.top_bar import TopBar
 
 
 def setup(app: Application) -> None:
@@ -20,6 +22,11 @@ def setup(app: Application) -> None:
         print(swipe_event)
 
     app.register_timer(timer)
+
+    top_bar = TopBar()
+    bottom_bar = BottomBar()
+    app.register_widget(top_bar)
+    app.register_widget(bottom_bar)
 
     app.set_swipe_callback(swipe_callback)
     app.set_click_notification(click_notifier)

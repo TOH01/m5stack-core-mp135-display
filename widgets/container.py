@@ -1,3 +1,4 @@
+import widgets.utils as utils
 from structures.dataclasses import ContainerStyle, PressEvent, Rect
 from widgets.renderer import Renderer
 from widgets.widget import Widget
@@ -10,8 +11,20 @@ class Container(Widget):
         self.style = style
 
     def add_widget(self, widget: Widget):
+        if not utils.fits(widget.rect, self.rect):
+            raise ValueError(
+                f"Widget bounds {widget.rect} exceed container limits ({self.rect.w}x{self.rect.h})"
+            )
+
         widget.parent = self
         self.widgets.append(widget)
+
+    def check_timers(self) -> None:
+        if self.active:
+            for widget in self.widgets:
+                widget.check_timers()
+
+            super().check_timers()
 
     def render(self, renderer: Renderer) -> None:
         if self.visible:
@@ -23,9 +36,7 @@ class Container(Widget):
                     widget.rerender = True
 
             for widget in self.widgets:
-                if widget.rerender:
-                    widget.render(renderer)
-                    widget.rerender = False
+                widget.render(renderer)
 
     def on_click(self, event: PressEvent) -> None:
         if self.visible:

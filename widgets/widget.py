@@ -1,3 +1,4 @@
+from application.timer_event import TimerEvent
 from structures.dataclasses import Point, PressEvent, Rect
 from widgets.renderer import Renderer
 from widgets.utils import is_inside
@@ -9,6 +10,8 @@ class Widget:
         self.rerender = True
         self.parent: Widget | None = None
         self.visible = True
+        self.active = True
+        self.timers: list[TimerEvent] = []
 
     def get_rect(self) -> Rect:
         rect = Rect(self.rect.x, self.rect.y, self.rect.w, self.rect.h)
@@ -27,3 +30,11 @@ class Widget:
 
     def on_click(self, event: PressEvent) -> None:
         pass
+
+    def add_timer(self, timer: TimerEvent):
+        self.timers.append(timer)
+
+    def check_timers(self) -> None:
+        if self.timers:
+            for timer in self.timers:
+                timer.check()

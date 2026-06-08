@@ -15,7 +15,7 @@ class SimDisplay:
         self.height = constants.DISPLAY_HEIGHT
 
     def draw_region(self, rect: Rect, data: bytes) -> None:
-        pass
+        print(f"Draw {len(data)} bytes")
 
     def set_brightness(self, brightness: int) -> None:
         pass

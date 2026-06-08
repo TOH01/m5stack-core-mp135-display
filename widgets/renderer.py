@@ -67,7 +67,7 @@ class Renderer:
         else:
             x = rect.x + rect.w - text_w
 
-        y = rect.y + (rect.h - text_h) // 2
+        y = rect.y + (rect.h - text_h) // 2 - bbox[1]
 
         self.draw.text((x, y), text, fill=style.color, font=font)
         self.dirty_regions.append(rect)
