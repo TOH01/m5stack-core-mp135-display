@@ -65,4 +65,4 @@ class PressEvent:
 
 @dataclass
 class SwipeEvent:
-    directon: Direction
+    direction: Direction

@@ -1,7 +1,9 @@
 from pathlib import Path
 
+import numpy as np
 from PIL import Image, ImageDraw, ImageFont
 
+import widgets.utils as utils
 from driver.display import Display
 from structures.dataclasses import CircleStyle, LineStyle, Point, Rect, RectStyle, TextStyle
 from structures.enums import TextAlignment, TextPreset
@@ -13,6 +15,8 @@ FONT_MAP = {
     TextPreset.BODY: ImageFont.truetype(str(FONT_DIR / "DejaVuSans.ttf"), 11),
 }
 
+CIRCLE_SUPERSAMPLE = 4
+
 
 class Renderer:
     def __init__(self, display: Display) -> None:
@@ -23,7 +27,7 @@ class Renderer:
 
     def draw_rect(self, rect: Rect, style: RectStyle) -> None:
         self.draw.rounded_rectangle(
-            (rect.x, rect.y, rect.x + rect.w, rect.y + rect.h),
+            (rect.x, rect.y, rect.x + rect.w - 1, rect.y + rect.h - 1),
             radius=style.radius,
             fill=style.fill,
             outline=style.outline,
@@ -32,15 +36,24 @@ class Renderer:
         self.dirty_regions.append(rect)
 
     def draw_circle(self, center: Point, radius: int, style: CircleStyle) -> None:
-        self.draw.ellipse(
-            (center.x - radius, center.y - radius, center.x + radius, center.y + radius),
-            fill=style.fill,
-            outline=style.outline,
-            width=style.outline_width,
+        ss = CIRCLE_SUPERSAMPLE
+        d = radius * 2 + 1
+        big = d * ss
+        tile = Image.new("RGBA", (big, big), (0, 0, 0, 0))
+        tile_draw = ImageDraw.Draw(tile)
+        tile_draw.ellipse(
+            (0, 0, big - 1, big - 1),
+            fill=(*style.fill, 255),
+            outline=(*style.outline, 255) if style.outline else None,
+            width=style.outline_width * ss,
         )
-        self.dirty_regions.append(
-            Rect(center.x - radius, center.y - radius, radius * 2, radius * 2)
-        )
+
+        tile = tile.resize((d, d), Image.LANCZOS)
+
+        pos = (center.x - radius, center.y - radius)
+        self.canvas.paste(tile, pos, tile)
+
+        self.dirty_regions.append(Rect(center.x - radius, center.y - radius, d, d))
 
     def draw_line(self, start: Point, end: Point, style: LineStyle) -> None:
         self.draw.line((start.x, start.y, end.x, end.y), fill=style.color, width=style.width)
@@ -57,8 +70,12 @@ class Renderer:
         text_w = bbox[2] - bbox[0]
         text_h = bbox[3] - bbox[1]
 
-        if text_w > rect.w or text_h > rect.h:
-            raise ValueError(f"Text '{text}' ({text_w}x{text_h}) exceeds rect ({rect.w}x{rect.h})")
+        if text_w > rect.w:
+            while text and font.getbbox(text + "…")[2] > rect.w:
+                text = text[:-1]
+            text += "…"
+            bbox = font.getbbox(text)
+            text_w, text_h = bbox[2] - bbox[0], bbox[3] - bbox[1]
 
         if style.alignment == TextAlignment.LEFT:
             x = rect.x
@@ -73,12 +90,9 @@ class Renderer:
         self.dirty_regions.append(rect)
 
     def update(self) -> None:
-        for rect in self.dirty_regions:
+        for rect in utils.merge_regions(self.dirty_regions):
             region = self.canvas.crop((rect.x, rect.y, rect.x + rect.w, rect.y + rect.h))
-            raw = region.tobytes()
-            buf = bytearray()
-            for i in range(0, len(raw), 3):
-                r, g, b = raw[i], raw[i + 1], raw[i + 2]
-                buf += ((r & 0xF8) << 8 | (g & 0xFC) << 3 | (b >> 3)).to_bytes(2, "little")
-            self.display.draw_region(rect, buf)
+            arr = np.asarray(region, dtype=np.uint16)
+            rgb565 = ((arr[..., 0] & 0xF8) << 8) | ((arr[..., 1] & 0xFC) << 3) | (arr[..., 2] >> 3)
+            self.display.draw_region(rect, rgb565.astype("<u2").tobytes())
         self.dirty_regions.clear()

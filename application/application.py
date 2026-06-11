@@ -33,6 +33,7 @@ class Application:
 
     def set_background(self, color):
         self.root.style.background.fill = color
+        self.root.rerender = True
 
     def set_click_notification(self, callback):
         self.click_notifier = callback

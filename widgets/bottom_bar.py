@@ -1,5 +1,6 @@
 from structures.dataclasses import ContainerStyle, Rect, RectStyle
 from widgets.container import Container
+from widgets.menu_indicator import MenuIndicator
 
 
 class BottomBar(Container):
@@ -7,3 +8,9 @@ class BottomBar(Container):
         self.rect = Rect(0, 240 - 25, 320, 25)
         self.style = ContainerStyle(RectStyle((30, 30, 35)))
         super().__init__(self.rect, self.style)
+
+        self.construct_menu_indicator()
+
+    def construct_menu_indicator(self):
+        self.menu_indicator = MenuIndicator(Rect(120, 7, 80, 13), 4)
+        self.add_widget(self.menu_indicator)

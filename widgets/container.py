@@ -41,6 +41,6 @@ class Container(Widget):
     def on_click(self, event: PressEvent) -> None:
         if self.visible:
             for widget in self.widgets:
-                if widget.contains(event.point):
+                if widget.visible and widget.contains(event.point):
                     widget.on_click(event)
                     return
