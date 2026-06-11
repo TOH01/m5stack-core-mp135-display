@@ -12,7 +12,8 @@ class Label(Widget):
     def render(self, renderer: Renderer) -> None:
         if self.rerender:
             rect = self.get_rect()
-            renderer.draw_rect(rect, RectStyle(fill=self.style.bg))
+            if self.style.bg is not None:
+                renderer.draw_rect(rect, RectStyle(fill=self.style.bg))
             renderer.draw_text(
                 rect,
                 self.text,

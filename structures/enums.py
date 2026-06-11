@@ -14,8 +14,17 @@ class Direction(Enum):
 
 
 class TextPreset(Enum):
-    HEADING = "heading"
-    BODY = "body"
+    HERO = "hero"
+    COLUMN_VALUE = "column_value"
+    AIR_CELL_VALUE = "air_cell_value"
+    SOCKET_WATTS = "socket_watts"
+    FOOTER_STAT = "footer_stat"
+    HOUR_TEMP = "hour_temp"
+    TIME = "time"
+    SCREEN_TITLE = "screen_title"
+    UNIT = "unit"
+    MICRO_LABEL = "micro_label"
+    META_STATUS = "meta_status"
 
 
 class TextAlignment(Enum):

@@ -1,9 +1,10 @@
 import time
 
+import theme
 from application.timer_event import TimerEvent
 from driver.display import Display
 from driver.input_manager import InputManager
-from structures.dataclasses import ContainerStyle, PressEvent, Rect, RectStyle, SwipeEvent
+from structures.dataclasses import PressEvent, Rect, SwipeEvent
 from widgets.container import Container
 from widgets.renderer import Renderer
 from widgets.widget import Widget
@@ -22,7 +23,7 @@ class Application:
         self.swipe_callback = None
         self.click_notifier = None
         self.root = Container(
-            Rect(0, 0, self.display.width, self.display.height), ContainerStyle(RectStyle())
+            Rect(0, 0, self.display.width, self.display.height), theme.BG_CONTAINER
         )
 
     def register_widget(self, widget: Widget) -> None:

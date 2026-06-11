@@ -1,3 +1,4 @@
+import theme
 from structures.dataclasses import CircleStyle, Point, Rect
 from widgets.renderer import Renderer
 from widgets.widget import Widget
@@ -18,8 +19,8 @@ class MenuIndicator(Widget):
         super().__init__(rect)
         self.pages = pages
         self.active_page = 1
-        self.active_style = active_style or CircleStyle(fill=(255, 255, 255))
-        self.inactive_style = inactive_style or CircleStyle(fill=(90, 90, 90))
+        self.active_style = active_style or theme.DOT_ACTIVE
+        self.inactive_style = inactive_style or theme.DOT_INACTIVE
 
     def set_active_page(self, active_page: int) -> None:
         if active_page < 1 or active_page > self.pages:

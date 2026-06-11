@@ -1,3 +1,4 @@
+import theme
 from application.application import Application
 from application.timer_event import TimerEvent
 from driver.display import Display
@@ -30,7 +31,7 @@ def setup(app: Application) -> None:
 
     app.set_swipe_callback(swipe_callback)
     app.set_click_notification(click_notifier)
-    app.set_background((18, 18, 20))
+    app.set_background(theme.BG)
 
 
 if __name__ == "__main__":

@@ -21,7 +21,7 @@ class RectStyle:
 
 @dataclass
 class ContainerStyle:
-    background: RectStyle
+    background: RectStyle | None = None
 
 
 @dataclass
@@ -35,7 +35,7 @@ class TextStyle:
 class LabelStyle:
     color: tuple[int, int, int]
     preset: TextPreset
-    bg: tuple[int, int, int] = (0, 0, 0)
+    bg: tuple[int, int, int] | None = None
     alignment: TextAlignment = TextAlignment.LEFT
 
 

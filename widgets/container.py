@@ -29,7 +29,8 @@ class Container(Widget):
     def render(self, renderer: Renderer) -> None:
         if self.visible:
             if self.rerender:
-                renderer.draw_rect(self.get_rect(), self.style.background)
+                if self.style.background:
+                    renderer.draw_rect(self.get_rect(), self.style.background)
                 self.rerender = False
 
                 for widget in self.widgets:

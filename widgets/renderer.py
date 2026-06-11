@@ -1,19 +1,11 @@
-from pathlib import Path
-
 import numpy as np
-from PIL import Image, ImageDraw, ImageFont
+from PIL import Image, ImageDraw
 
 import widgets.utils as utils
 from driver.display import Display
 from structures.dataclasses import CircleStyle, LineStyle, Point, Rect, RectStyle, TextStyle
-from structures.enums import TextAlignment, TextPreset
-
-FONT_DIR = Path(__file__).parent.parent / "fonts"
-
-FONT_MAP = {
-    TextPreset.HEADING: ImageFont.truetype(str(FONT_DIR / "DejaVuSans-Bold.ttf"), 13),
-    TextPreset.BODY: ImageFont.truetype(str(FONT_DIR / "DejaVuSans.ttf"), 11),
-}
+from structures.enums import TextAlignment
+from theme import FONT_MAP
 
 CIRCLE_SUPERSAMPLE = 4
 
