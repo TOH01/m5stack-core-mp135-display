@@ -29,6 +29,7 @@ class TextStyle:
     color: tuple[int, int, int]
     preset: TextPreset
     alignment: TextAlignment = TextAlignment.LEFT
+    tracking: int = 0
 
 
 @dataclass
@@ -37,6 +38,7 @@ class LabelStyle:
     preset: TextPreset
     bg: tuple[int, int, int] | None = None
     alignment: TextAlignment = TextAlignment.LEFT
+    tracking: int = 0
 
 
 @dataclass

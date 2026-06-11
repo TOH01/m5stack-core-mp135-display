@@ -1,3 +1,4 @@
+import theme
 from structures.dataclasses import LabelStyle, Rect, RectStyle, TextStyle
 from widgets.renderer import Renderer
 from widgets.widget import Widget
@@ -12,13 +13,17 @@ class Label(Widget):
     def render(self, renderer: Renderer) -> None:
         if self.rerender:
             rect = self.get_rect()
-            if self.style.bg is not None:
-                renderer.draw_rect(rect, RectStyle(fill=self.style.bg))
+            # Clear background to prevent character overlapping
+            bg_color = self.style.bg if self.style.bg is not None else theme.BG
+            renderer.draw_rect(rect, RectStyle(fill=bg_color))
             renderer.draw_text(
                 rect,
                 self.text,
                 TextStyle(
-                    color=self.style.color, preset=self.style.preset, alignment=self.style.alignment
+                    color=self.style.color,
+                    preset=self.style.preset,
+                    alignment=self.style.alignment,
+                    tracking=self.style.tracking,
                 ),
             )
             self.rerender = False

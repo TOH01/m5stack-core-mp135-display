@@ -39,16 +39,15 @@ FONT_MAP: dict[TextPreset, ImageFont.FreeTypeFont] = {
     TextPreset.META_STATUS: ImageFont.truetype(_REGULAR, 8),
 }
 
-# ── Pre-built styles ──────────────────────────────────────────────
-# Containers / panels
+
 TRANSPARENT_CONTAINER = ContainerStyle()
 BG_CONTAINER = ContainerStyle(RectStyle(fill=BG))
 
-# Labels
 LABEL_PRIMARY = LabelStyle(color=TEXT, preset=TextPreset.FOOTER_STAT)
 LABEL_SUB = LabelStyle(color=SUB, preset=TextPreset.META_STATUS)
-LABEL_TITLE = LabelStyle(color=SUB, preset=TextPreset.SCREEN_TITLE)
+LABEL_TITLE = LabelStyle(color=SUB, preset=TextPreset.SCREEN_TITLE, tracking=1)
 LABEL_TIME = LabelStyle(color=SUB, preset=TextPreset.TIME)
+LABEL_MICRO = LabelStyle(color=SUB, preset=TextPreset.MICRO_LABEL, tracking=1)
 
 DOT_ACTIVE = CircleStyle(fill=TEXT)
 DOT_INACTIVE = CircleStyle(fill=FAINT)

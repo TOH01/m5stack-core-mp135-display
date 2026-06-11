@@ -35,7 +35,7 @@ class Renderer:
         tile_draw = ImageDraw.Draw(tile)
         tile_draw.ellipse(
             (0, 0, big - 1, big - 1),
-            fill=(*style.fill, 255),
+            fill=(*style.fill, 255) if style.fill is not None else None,
             outline=(*style.outline, 255) if style.outline else None,
             width=style.outline_width * ss,
         )
@@ -58,16 +58,35 @@ class Renderer:
 
     def draw_text(self, rect: Rect, text: str, style: TextStyle) -> None:
         font = FONT_MAP[style.preset]
-        bbox = font.getbbox(text)
-        text_w = bbox[2] - bbox[0]
-        text_h = bbox[3] - bbox[1]
+        
+        if style.tracking > 0:
+            text_w = sum(font.getlength(c) for c in text) + (len(text) - 1) * style.tracking
+            bbox = font.getbbox(text)
+            text_h = bbox[3] - bbox[1] if bbox else 0
+        else:
+            bbox = font.getbbox(text)
+            text_w = bbox[2] - bbox[0] if bbox else 0
+            text_h = bbox[3] - bbox[1] if bbox else 0
 
         if text_w > rect.w:
-            while text and font.getbbox(text + "…")[2] > rect.w:
+            while text:
+                curr_w = (
+                    (sum(font.getlength(c) for c in text + "…") + len(text) * style.tracking)
+                    if style.tracking > 0
+                    else font.getbbox(text + "…")[2]
+                )
+                if curr_w <= rect.w:
+                    break
                 text = text[:-1]
             text += "…"
-            bbox = font.getbbox(text)
-            text_w, text_h = bbox[2] - bbox[0], bbox[3] - bbox[1]
+            if style.tracking > 0:
+                text_w = sum(font.getlength(c) for c in text) + (len(text) - 1) * style.tracking
+                bbox = font.getbbox(text)
+                text_h = bbox[3] - bbox[1] if bbox else 0
+            else:
+                bbox = font.getbbox(text)
+                text_w = bbox[2] - bbox[0] if bbox else 0
+                text_h = bbox[3] - bbox[1] if bbox else 0
 
         if style.alignment == TextAlignment.LEFT:
             x = rect.x
@@ -76,9 +95,16 @@ class Renderer:
         else:
             x = rect.x + rect.w - text_w
 
-        y = rect.y + (rect.h - text_h) // 2 - bbox[1]
+        top_offset = bbox[1] if bbox else 0
+        y = rect.y + (rect.h - text_h) // 2 - top_offset
 
-        self.draw.text((x, y), text, fill=style.color, font=font)
+        if style.tracking > 0:
+            curr_x = x
+            for c in text:
+                self.draw.text((curr_x, y), c, fill=style.color, font=font)
+                curr_x += font.getlength(c) + style.tracking
+        else:
+            self.draw.text((x, y), text, fill=style.color, font=font)
         self.dirty_regions.append(rect)
 
     def update(self) -> None:

@@ -1,59 +1,45 @@
 import theme
-from structures.dataclasses import CircleStyle, Point, Rect
+from structures.dataclasses import Rect, RectStyle
 from widgets.renderer import Renderer
 from widgets.widget import Widget
 
 
 class MenuIndicator(Widget):
-    INACTIVE_RATIO = 0.7
-    GAP_RATIO = 1.0
-    MIN_RADIUS = 1
-
     def __init__(
         self,
         rect: Rect,
         pages: int,
-        active_style: CircleStyle | None = None,
-        inactive_style: CircleStyle | None = None,
     ) -> None:
         super().__init__(rect)
         self.pages = pages
         self.active_page = 1
-        self.active_style = active_style or theme.DOT_ACTIVE
-        self.inactive_style = inactive_style or theme.DOT_INACTIVE
 
     def set_active_page(self, active_page: int) -> None:
         if active_page < 1 or active_page > self.pages:
             raise ValueError(f"Invalid page {active_page}/{self.pages}")
-        self.active_page = active_page
-
-    def _compute_layout(self, rect: Rect) -> tuple[int, int, int, int]:
-        active_r = max(self.MIN_RADIUS, rect.h // 2)
-
-        while True:
-            inactive_r = max(self.MIN_RADIUS, round(active_r * self.INACTIVE_RATIO))
-            gap = max(2, round(active_r * self.GAP_RATIO))
-            total_w = 2 * active_r + (self.pages - 1) * (2 * inactive_r + gap)
-
-            if total_w <= rect.w or active_r <= self.MIN_RADIUS:
-                return active_r, inactive_r, gap, total_w
-
-            active_r -= 1
+        if self.active_page != active_page:
+            self.active_page = active_page
+            self.rerender = True
 
     def render(self, renderer: Renderer) -> None:
         if self.rerender:
             rect = self.get_rect()
-            active_r, inactive_r, gap, total_w = self._compute_layout(rect)
-
-            center_y = rect.y + rect.h // 2
-            cursor_x = rect.x + (rect.w - total_w) // 2
-
+            # Active pill is 14px wide, inactive dots are 5px wide. Gap is 7px.
+            total_w = 14 + (self.pages - 1) * 5 + (self.pages - 1) * 7
+            
+            # Center vertically and horizontally in self.rect
+            start_x = rect.x + (rect.w - total_w) // 2
+            start_y = rect.y + (rect.h - 5) // 2
+            
+            cursor_x = start_x
             for page in range(1, self.pages + 1):
                 if page == self.active_page:
-                    r, style = active_r, self.active_style
+                    pill_rect = Rect(cursor_x, start_y, 14, 5)
+                    renderer.draw_rect(pill_rect, RectStyle(fill=theme.TEXT, radius=2))
+                    cursor_x += 14 + 7
                 else:
-                    r, style = inactive_r, self.inactive_style
-
-                renderer.draw_circle(Point(cursor_x + r, center_y), r, style)
-                cursor_x += 2 * r + gap
+                    dot_rect = Rect(cursor_x, start_y, 5, 5)
+                    renderer.draw_rect(dot_rect, RectStyle(fill=theme.FAINT, radius=2))
+                    cursor_x += 5 + 7
             self.rerender = False
+
