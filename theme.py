@@ -27,16 +27,16 @@ _REGULAR = str(FONT_DIR / "IBMPlexSans-Regular.ttf")
 
 FONT_MAP: dict[TextPreset, ImageFont.FreeTypeFont] = {
     TextPreset.HERO: ImageFont.truetype(_SEMIBOLD, 38),
-    TextPreset.COLUMN_VALUE: ImageFont.truetype(_SEMIBOLD, 30),
-    TextPreset.AIR_CELL_VALUE: ImageFont.truetype(_SEMIBOLD, 23),
-    TextPreset.SOCKET_WATTS: ImageFont.truetype(_SEMIBOLD, 16),
-    TextPreset.FOOTER_STAT: ImageFont.truetype(_SEMIBOLD, 12),
-    TextPreset.HOUR_TEMP: ImageFont.truetype(_SEMIBOLD, 11),
+    TextPreset.COLUMN_VALUE: ImageFont.truetype(_MEDIUM, 30),
+    TextPreset.AIR_CELL_VALUE: ImageFont.truetype(_MEDIUM, 23),
+    TextPreset.SOCKET_WATTS: ImageFont.truetype(_MEDIUM, 16),
+    TextPreset.FOOTER_STAT: ImageFont.truetype(_MEDIUM, 12),
+    TextPreset.HOUR_TEMP: ImageFont.truetype(_MEDIUM, 11),
     TextPreset.TIME: ImageFont.truetype(_MEDIUM, 12),
-    TextPreset.SCREEN_TITLE: ImageFont.truetype(_SEMIBOLD, 11),
-    TextPreset.UNIT: ImageFont.truetype(_MEDIUM, 10),
-    TextPreset.MICRO_LABEL: ImageFont.truetype(_SEMIBOLD, 8),
-    TextPreset.META_STATUS: ImageFont.truetype(_REGULAR, 8),
+    TextPreset.SCREEN_TITLE: ImageFont.truetype(_MEDIUM, 11),
+    TextPreset.UNIT: ImageFont.truetype(_MEDIUM, 11),
+    TextPreset.MICRO_LABEL: ImageFont.truetype(_MEDIUM, 11),
+    TextPreset.META_STATUS: ImageFont.truetype(_REGULAR, 11),
 }
 
 

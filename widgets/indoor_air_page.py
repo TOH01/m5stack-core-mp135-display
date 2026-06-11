@@ -1,5 +1,5 @@
 import theme
-from structures.dataclasses import CircleStyle, LabelStyle, Point, Rect, TextStyle
+from structures.dataclasses import CircleStyle, LabelStyle, Point, Rect, RectStyle, TextStyle
 from structures.enums import TextAlignment, TextPreset
 from widgets.container import Container
 from widgets.label import Label
@@ -31,6 +31,8 @@ class AirCellWidget(Widget):
     def render(self, renderer: Renderer) -> None:
         if self.rerender:
             rect = self.get_rect()
+            # Clear background first to avoid text overlap
+            renderer.draw_rect(rect, RectStyle(fill=theme.BG))
             y_start = rect.y + 3
             
             # 1. Header line: dot 5Ø + 5px gap + label

@@ -1,8 +1,9 @@
 import theme
 from application.timer_event import TimerEvent
-from structures.dataclasses import CircleStyle, LabelStyle, Point, Rect, TextStyle
+from structures.dataclasses import CircleStyle, LabelStyle, Point, Rect, RectStyle, TextStyle
 from structures.enums import TextAlignment, TextPreset
 from widgets.container import Container
+from widgets.icons import get_tinted_icon
 from widgets.label import Label
 from widgets.renderer import Renderer
 from widgets.widget import Widget
@@ -33,6 +34,9 @@ class SocketWidget(Widget):
             rect = self.get_rect()
             y_start = rect.y
             
+            # Clear background first (so the socket area doesn't accumulate text overlay)
+            renderer.draw_rect(rect, RectStyle(fill=theme.BG))
+            
             # Determine color based on state
             color = theme.GOOD if self.is_on else theme.FAINT
             rcx = self.cx
@@ -45,19 +49,13 @@ class SocketWidget(Widget):
             # Outline
             renderer.draw_circle(Point(rcx, rcy), 20, CircleStyle(fill=None, outline=color, outline_width=2))
             
-            # 2. Draw power glyph (13px inside ring: arc 300° + 2px stem)
-            renderer.draw.arc(
-                (rcx - 6, rcy - 6, rcx + 6, rcy + 6),
-                start=300,
-                end=240,
-                fill=color,
-                width=2,
-            )
-            # Stem line
-            renderer.draw.line(
-                (rcx, rcy - 8, rcx, rcy - 2),
-                fill=color,
-                width=2,
+            # 2. Draw power glyph using tinted PNG icon (using actual icon dimensions for centering)
+            power_size = 14
+            power_icon = get_tinted_icon("power", (power_size, power_size), color)
+            renderer.canvas.paste(
+                power_icon,
+                (rcx - power_icon.width // 2, rcy - power_icon.height // 2),
+                power_icon
             )
             
             # 3. Draw name
@@ -117,6 +115,9 @@ class PowerFooterWidget(Widget):
     def render(self, renderer: Renderer) -> None:
         if self.rerender:
             rect = self.get_rect()
+            # Clear background first to avoid overlapping text
+            renderer.draw_rect(rect, RectStyle(fill=theme.BG))
+            
             y_baseline = rect.y + rect.h - 2
             
             # Left: total watts + now
@@ -148,9 +149,9 @@ class PowerFooterWidget(Widget):
             val_num_w = font_watts.getlength(val_num)
             
             rx = rect.x + rect.w
-            renderer.draw.text((rx, y_baseline), val_unit, fill=theme.TEXT, font=font_watts, anchor="ls")
-            renderer.draw.text((rx - val_unit_w, y_baseline), val_num, fill=theme.TEXT, font=font_watts, anchor="ls")
-            renderer.draw.text((rx - val_unit_w - val_num_w - 4, y_baseline), label_text, fill=theme.FAINT, font=font_now, anchor="ls")
+            renderer.draw.text((rx, y_baseline), val_unit, fill=theme.TEXT, font=font_watts, anchor="rs")
+            renderer.draw.text((rx - val_unit_w, y_baseline), val_num, fill=theme.TEXT, font=font_watts, anchor="rs")
+            renderer.draw.text((rx - val_unit_w - val_num_w - 4, y_baseline), label_text, fill=theme.FAINT, font=font_now, anchor="rs")
             
             renderer.dirty_regions.append(rect)
             self.rerender = False
