@@ -54,6 +54,12 @@ they are reused across multiple places.
   many names, `import module` and qualify with `module.name` instead.
 - Prefer `import module` for stdlib namespaces where the prefix is informative
   (`os.`, `json.`, `subprocess.`).
+- **No type-check-only imports.** Never add a `TYPE_CHECKING` block or a string
+  forward-reference annotation just to satisfy a checker. If a type hint would cause
+  a circular import, that is the design telling you the layering is wrong — a
+  lower-level module is being made to know about a higher-level one. Fix the layering
+  (split the module so the type lives at the layer that can import its dependencies
+  directly), do not paper over it. Every import must be a real, runtime import.
 
 ## Naming
 

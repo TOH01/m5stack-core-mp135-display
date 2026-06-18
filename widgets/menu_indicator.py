@@ -1,5 +1,5 @@
 import theme
-from structures.dataclasses import CircleStyle, Point, Rect
+from structures.dataclasses import CircleStyle, Color, Point, Rect, RectStyle
 from widgets.renderer import Renderer
 from widgets.widget import Widget
 
@@ -9,10 +9,11 @@ class MenuIndicator(Widget):
     GAP_RATIO = 1.0
     MIN_RADIUS = 1
 
-    def __init__(self, rect: Rect, pages: int, active_style: CircleStyle | None = None, inactive_style: CircleStyle | None = None) -> None:
+    def __init__(self, rect: Rect, pages: int, background: Color = theme.Palette.SURFACE, active_style: CircleStyle | None = None, inactive_style: CircleStyle | None = None) -> None:
         super().__init__(rect)
         self.pages = pages
         self.active_page = 1
+        self.background = background
         self.active_style = active_style or CircleStyle(fill=theme.Palette.ACCENT)
         self.inactive_style = inactive_style or CircleStyle(fill=theme.Palette.MUTED)
 
@@ -20,6 +21,7 @@ class MenuIndicator(Widget):
         if active_page < 1 or active_page > self.pages:
             raise ValueError(f"Invalid page {active_page}/{self.pages}")
         self.active_page = active_page
+        self.rerender = True
 
     def _compute_layout(self, rect: Rect) -> tuple[int, int, int, int]:
         active_r = max(self.MIN_RADIUS, rect.h // 2)
@@ -39,6 +41,7 @@ class MenuIndicator(Widget):
             return
         
         rect = self.get_rect()
+        renderer.draw_rect(rect, RectStyle(fill=self.background))
         active_r, inactive_r, gap, total_w = self._compute_layout(rect)
 
         center_y = rect.y + rect.h // 2

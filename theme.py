@@ -1,5 +1,5 @@
 from structures.dataclasses import Color, ContainerStyle, LabelStyle, RectStyle
-from structures.enums import TextPreset
+from structures.enums import TextAlignment, TextPreset
 
 
 class Palette:
@@ -27,3 +27,12 @@ def overlay_style() -> ContainerStyle:
 
 def top_bar_text_style() -> LabelStyle:
     return LabelStyle(Palette.TEXT_PRIMARY, TextPreset.HEADING, Palette.SURFACE)
+
+def menu_background_style() -> ContainerStyle:
+    return ContainerStyle(RectStyle(Palette.BACKGROUND))
+
+def transparent_container_style() -> ContainerStyle:
+    return ContainerStyle(background=None)
+
+def content_text_style() -> LabelStyle:
+    return LabelStyle(Palette.TEXT_PRIMARY, TextPreset.BODY, Palette.BACKGROUND, TextAlignment.CENTER)

@@ -55,25 +55,23 @@ class Renderer:
 
     def draw_text(self, rect: Rect, text: str, style: TextStyle) -> None:
         font = FONT_MAP[style.preset]
-        bbox = font.getbbox(text)
-        text_w = bbox[2] - bbox[0]
-        text_h = bbox[3] - bbox[1]
+        text_w = font.getlength(text)
 
         if text_w > rect.w:
-            while text and font.getbbox(text + "…")[2] > rect.w:
+            while text and font.getlength(text + "…") > rect.w:
                 text = text[:-1]
             text += "…"
-            bbox = font.getbbox(text)
-            text_w, text_h = bbox[2] - bbox[0], bbox[3] - bbox[1]
+            text_w = font.getlength(text)
 
         if style.alignment == TextAlignment.LEFT:
             x = rect.x
         elif style.alignment == TextAlignment.CENTER:
-            x = rect.x + (rect.w - text_w) // 2
+            x = rect.x + int((rect.w - text_w) // 2)
         else:
-            x = rect.x + rect.w - text_w
+            x = rect.x + int(rect.w - text_w)
 
-        y = rect.y + (rect.h - text_h) // 2 - bbox[1]
+        ascent, descent = font.getmetrics()
+        y = rect.y + (rect.h - (ascent + descent)) // 2
 
         self.draw.text((x, y), text, fill=style.color, font=font)
         self.dirty_regions.append(rect)

@@ -28,7 +28,7 @@ class RectStyle:
 
 @dataclass
 class ContainerStyle:
-    background: RectStyle
+    background: RectStyle | None
 
 
 @dataclass

@@ -30,3 +30,29 @@ def merge_regions(regions: list[Rect]) -> list[Rect]:
 def clamp(rect: Rect, max_w: int, max_h: int) -> Rect:
     x, y = max(rect.x, 0), max(rect.y, 0)
     return Rect(x, y, min(rect.x + rect.w, max_w) - x, min(rect.y + rect.h, max_h) - y)
+
+def _carve(rect: Rect, hole: Rect) -> list[Rect]:
+    ix, iy = max(rect.x, hole.x), max(rect.y, hole.y)
+    ir, ib = min(rect.x + rect.w, hole.x + hole.w), min(rect.y + rect.h, hole.y + hole.h)
+    if ix >= ir or iy >= ib:
+        return [rect]
+
+    pieces: list[Rect] = []
+    if rect.y < iy:
+        pieces.append(Rect(rect.x, rect.y, rect.w, iy - rect.y))
+    if ib < rect.y + rect.h:
+        pieces.append(Rect(rect.x, ib, rect.w, rect.y + rect.h - ib))
+    if rect.x < ix:
+        pieces.append(Rect(rect.x, iy, ix - rect.x, ib - iy))
+    if ir < rect.x + rect.w:
+        pieces.append(Rect(ir, iy, rect.x + rect.w - ir, ib - iy))
+    return pieces
+
+def subtract_regions(regions: list[Rect], holes: list[Rect]) -> list[Rect]:
+    result = list(regions)
+    for hole in holes:
+        carved: list[Rect] = []
+        for rect in result:
+            carved.extend(_carve(rect, hole))
+        result = carved
+    return result

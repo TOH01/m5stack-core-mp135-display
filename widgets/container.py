@@ -25,20 +25,23 @@ class Container(Widget):
             super().check_timers()
 
     def render(self, renderer: Renderer) -> None:
-        if self.visible:
-            if self.rerender:
+        if not self.visible:
+            return
+        if self.rerender:
+            if self.style.background is not None:
                 renderer.draw_rect(self.get_rect(), self.style.background)
-                self.rerender = False
-
-                for widget in self.widgets:
-                    widget.rerender = True
+            self.rerender = False
 
             for widget in self.widgets:
-                widget.render(renderer)
+                widget.rerender = True
+
+        for widget in self.widgets:
+            widget.render(renderer)
 
     def on_click(self, event: PressEvent) -> None:
-        if self.visible:
-            for widget in self.widgets:
-                if widget.visible and widget.contains(event.point):
-                    widget.on_click(event)
-                    return
+        if not self.visible:
+            return
+        for widget in self.widgets:
+            if widget.visible and widget.contains(event.point):
+                widget.on_click(event)
+                return
