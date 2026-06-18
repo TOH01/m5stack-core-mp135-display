@@ -1,6 +1,13 @@
 from dataclasses import dataclass
+from typing import NamedTuple
 
 from structures.enums import Direction, TextAlignment, TextPreset
+
+
+class Color(NamedTuple):
+    r: int
+    g: int
+    b: int
 
 
 @dataclass
@@ -13,8 +20,8 @@ class Rect:
 
 @dataclass
 class RectStyle:
-    fill: tuple[int, int, int] = (0, 0, 0)
-    outline: tuple[int, int, int] | None = None
+    fill: Color = Color(0, 0, 0)
+    outline: Color | None = None
     outline_width: int = 1
     radius: int = 0
 
@@ -26,16 +33,16 @@ class ContainerStyle:
 
 @dataclass
 class TextStyle:
-    color: tuple[int, int, int]
+    color: Color
     preset: TextPreset
     alignment: TextAlignment = TextAlignment.LEFT
 
 
 @dataclass
 class LabelStyle:
-    color: tuple[int, int, int]
+    color: Color
     preset: TextPreset
-    bg: tuple[int, int, int] = (0, 0, 0)
+    bg: Color = Color(0, 0, 0)
     alignment: TextAlignment = TextAlignment.LEFT
 
 
@@ -47,14 +54,14 @@ class Point:
 
 @dataclass
 class CircleStyle:
-    fill: tuple[int, int, int] = (0, 0, 0)
-    outline: tuple[int, int, int] | None = None
+    fill: Color = Color(0, 0, 0)
+    outline: Color | None = None
     outline_width: int = 1
 
 
 @dataclass
 class LineStyle:
-    color: tuple[int, int, int] = (0, 0, 0)
+    color: Color = Color(0, 0, 0)
     width: int = 1
 
 

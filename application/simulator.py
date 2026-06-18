@@ -56,9 +56,7 @@ if __name__ == "__main__":
     root.title("M5Stack Simulator")
     root.resizable(False, False)
 
-    tk_canvas = tk.Canvas(
-        root, width=constants.DISPLAY_WIDTH, height=constants.DISPLAY_HEIGHT, highlightthickness=0
-    )
+    tk_canvas = tk.Canvas(root, width=constants.DISPLAY_WIDTH, height=constants.DISPLAY_HEIGHT, highlightthickness=0)
     tk_canvas.pack()
 
     display = SimDisplay()
@@ -68,7 +66,7 @@ if __name__ == "__main__":
 
     photo: list[tk.PhotoImage | None] = [None]
 
-    def tick():
+    def tick() -> None:
         app._execute()
         ppm = io.BytesIO()
         app.renderer.canvas.save(ppm, format="PPM")

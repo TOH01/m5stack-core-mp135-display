@@ -31,7 +31,7 @@ class Widget:
     def on_click(self, event: PressEvent) -> None:
         pass
 
-    def add_timer(self, timer: TimerEvent):
+    def add_timer(self, timer: TimerEvent) -> None:
         self.timers.append(timer)
 
     def check_timers(self) -> None:

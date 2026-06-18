@@ -1,0 +1,29 @@
+from structures.dataclasses import Color, ContainerStyle, LabelStyle, RectStyle
+from structures.enums import TextPreset
+
+
+class Palette:
+    BACKGROUND   = Color(18, 18, 20)     # near-black
+    SURFACE      = Color(30, 30, 35)     # dark gray
+    OVERLAY      = Color(40, 40, 48)     # slate gray
+    TEXT_PRIMARY = Color(240, 240, 240)  # off-white
+    ACCENT       = Color(255, 255, 255)  # white
+    MUTED        = Color(90, 90, 90)     # medium gray
+
+
+class Spacing:
+    SCREEN_W       = 320
+    SCREEN_H       = 240
+    BAR_HEIGHT     = 25
+    PADDING        = 8
+    OVERLAY_RADIUS = 8
+
+
+def surface_style() -> ContainerStyle:
+    return ContainerStyle(RectStyle(Palette.SURFACE))
+
+def overlay_style() -> ContainerStyle:
+    return ContainerStyle(RectStyle(Palette.OVERLAY, radius=Spacing.OVERLAY_RADIUS))
+
+def top_bar_text_style() -> LabelStyle:
+    return LabelStyle(Palette.TEXT_PRIMARY, TextPreset.HEADING, Palette.SURFACE)

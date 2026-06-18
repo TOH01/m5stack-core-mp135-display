@@ -1,44 +1,41 @@
 import time
+from typing import Callable
 
 from application.timer_event import TimerEvent
 from driver.display import Display
 from driver.input_manager import InputManager
-from structures.dataclasses import ContainerStyle, PressEvent, Rect, RectStyle, SwipeEvent
+from structures.dataclasses import Color, ContainerStyle, PressEvent, Rect, RectStyle, SwipeEvent
 from widgets.container import Container
 from widgets.renderer import Renderer
 from widgets.widget import Widget
 
 
 class Application:
-    def __init__(
-        self, display: Display, input_manager: InputManager, refresh_interval_s: float = 0.05
-    ) -> None:
+    def __init__(self, display: Display, input_manager: InputManager, refresh_interval_s: float = 0.05) -> None:
         self.stop = False
         self.display = display
         self.renderer = Renderer(self.display)
         self.input_manager = input_manager
         self.input_manager.start()
         self.refresh_interval_s = refresh_interval_s
-        self.swipe_callback = None
-        self.click_notifier = None
-        self.root = Container(
-            Rect(0, 0, self.display.width, self.display.height), ContainerStyle(RectStyle())
-        )
+        self.swipe_callback: Callable | None = None
+        self.click_notifier: Callable | None = None
+        self.root = Container(Rect(0, 0, self.display.width, self.display.height), ContainerStyle(RectStyle()))
 
     def register_widget(self, widget: Widget) -> None:
         self.root.add_widget(widget)
 
-    def register_timer(self, timer: TimerEvent):
+    def register_timer(self, timer: TimerEvent) -> None:
         self.root.add_timer(timer)
 
-    def set_background(self, color):
+    def set_background(self, color: Color) -> None:
         self.root.style.background.fill = color
         self.root.rerender = True
 
-    def set_click_notification(self, callback):
+    def set_click_notification(self, callback: Callable) -> None:
         self.click_notifier = callback
 
-    def set_swipe_callback(self, callback):
+    def set_swipe_callback(self, callback: Callable) -> None:
         self.swipe_callback = callback
 
     def main_loop(self) -> None:

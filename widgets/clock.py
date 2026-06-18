@@ -1,7 +1,8 @@
 from datetime import datetime
 
+import theme
 from application.timer_event import TimerEvent
-from structures.dataclasses import ContainerStyle, LabelStyle, Rect, TextPreset
+from structures.dataclasses import ContainerStyle, Rect
 from widgets.container import Container
 from widgets.label import Label
 
@@ -18,11 +19,7 @@ class Clock(Container):
         self._build()
 
     def _make_label(self, text: str, x: int, width: int) -> Label:
-        return Label(
-            Rect(x, 0, width, 20),
-            text,
-            LabelStyle((240, 240, 240), TextPreset.HEADING, (30, 30, 35)),
-        )
+        return Label(Rect(x, 0, width, 20), text, theme.top_bar_text_style())
 
     def _update_time(self) -> None:
         now = datetime.now()

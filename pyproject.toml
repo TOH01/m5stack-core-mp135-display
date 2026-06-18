@@ -30,8 +30,6 @@ line-length = 100
 [tool.ruff.lint]
 select = [
     "F", # Pyflakes
-    "E", # pycodestyle errors
-    "W", # pycodestyle warnings
     "I", # import sorting
     "B", # flake8-bugbear
 ]

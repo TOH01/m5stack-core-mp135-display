@@ -13,15 +13,9 @@ class Label(Widget):
         if self.rerender:
             rect = self.get_rect()
             renderer.draw_rect(rect, RectStyle(fill=self.style.bg))
-            renderer.draw_text(
-                rect,
-                self.text,
-                TextStyle(
-                    color=self.style.color, preset=self.style.preset, alignment=self.style.alignment
-                ),
-            )
+            renderer.draw_text(rect, self.text, TextStyle(color=self.style.color, preset=self.style.preset, alignment=self.style.alignment))
             self.rerender = False
 
-    def update_text(self, text: str):
+    def update_text(self, text: str) -> None:
         self.text = text
         self.rerender = True

@@ -1,4 +1,5 @@
 from collections import deque
+from pathlib import Path
 from threading import Thread
 
 from evdev import InputDevice, ecodes
@@ -10,10 +11,10 @@ from structures.enums import TouchEvent
 
 
 class InputManager:
-    def __init__(self, device_path=constants.INPUT_DEVICE_PATH, swipe_threshold=30) -> None:
+    def __init__(self, device_path: Path = constants.INPUT_DEVICE_PATH, swipe_threshold: int = 30) -> None:
         self.device = InputDevice(device_path)
         self.swipe_threshold = swipe_threshold
-        self.events = deque(maxlen=32)
+        self.events: deque[SwipeEvent | PressEvent] = deque(maxlen=32)
 
     def start(self) -> None:
         Thread(target=self._run, daemon=True).start()
@@ -30,7 +31,7 @@ class InputManager:
             direction = utils.get_swipe_direction(down, up)
             self.events.append(SwipeEvent(direction))
 
-    def _run(self):
+    def _run(self) -> None:
         down_point = Point(-1, -1)
         up_point = Point(-1, -1)
         temp_x, temp_y = -1, -1

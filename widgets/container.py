@@ -10,11 +10,9 @@ class Container(Widget):
         self.widgets: list[Widget] = []
         self.style = style
 
-    def add_widget(self, widget: Widget):
+    def add_widget(self, widget: Widget) -> None:
         if not utils.fits(widget.rect, self.rect):
-            raise ValueError(
-                f"Widget bounds {widget.rect} exceed container limits ({self.rect.w}x{self.rect.h})"
-            )
+            raise ValueError(f"Widget bounds {widget.rect} exceed container limits ({self.rect.w}x{self.rect.h})")
 
         widget.parent = self
         self.widgets.append(widget)

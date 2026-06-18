@@ -26,13 +26,7 @@ class Renderer:
         self.dirty_regions: list[Rect] = []
 
     def draw_rect(self, rect: Rect, style: RectStyle) -> None:
-        self.draw.rounded_rectangle(
-            (rect.x, rect.y, rect.x + rect.w - 1, rect.y + rect.h - 1),
-            radius=style.radius,
-            fill=style.fill,
-            outline=style.outline,
-            width=style.outline_width,
-        )
+        self.draw.rounded_rectangle((rect.x, rect.y, rect.x + rect.w - 1, rect.y + rect.h - 1), radius=style.radius, fill=style.fill, outline=style.outline, width=style.outline_width)
         self.dirty_regions.append(rect)
 
     def draw_circle(self, center: Point, radius: int, style: CircleStyle) -> None:
@@ -41,12 +35,7 @@ class Renderer:
         big = d * ss
         tile = Image.new("RGBA", (big, big), (0, 0, 0, 0))
         tile_draw = ImageDraw.Draw(tile)
-        tile_draw.ellipse(
-            (0, 0, big - 1, big - 1),
-            fill=(*style.fill, 255),
-            outline=(*style.outline, 255) if style.outline else None,
-            width=style.outline_width * ss,
-        )
+        tile_draw.ellipse((0, 0, big - 1, big - 1), fill=(*style.fill, 255), outline=(*style.outline, 255) if style.outline else None, width=style.outline_width * ss)
 
         tile = tile.resize((d, d), Image.LANCZOS)
 

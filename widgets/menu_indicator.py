@@ -1,3 +1,4 @@
+import theme
 from structures.dataclasses import CircleStyle, Point, Rect
 from widgets.renderer import Renderer
 from widgets.widget import Widget
@@ -8,18 +9,12 @@ class MenuIndicator(Widget):
     GAP_RATIO = 1.0
     MIN_RADIUS = 1
 
-    def __init__(
-        self,
-        rect: Rect,
-        pages: int,
-        active_style: CircleStyle | None = None,
-        inactive_style: CircleStyle | None = None,
-    ) -> None:
+    def __init__(self, rect: Rect, pages: int, active_style: CircleStyle | None = None, inactive_style: CircleStyle | None = None) -> None:
         super().__init__(rect)
         self.pages = pages
         self.active_page = 1
-        self.active_style = active_style or CircleStyle(fill=(255, 255, 255))
-        self.inactive_style = inactive_style or CircleStyle(fill=(90, 90, 90))
+        self.active_style = active_style or CircleStyle(fill=theme.Palette.ACCENT)
+        self.inactive_style = inactive_style or CircleStyle(fill=theme.Palette.MUTED)
 
     def set_active_page(self, active_page: int) -> None:
         if active_page < 1 or active_page > self.pages:
