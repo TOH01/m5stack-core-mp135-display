@@ -35,19 +35,21 @@ class MenuIndicator(Widget):
             active_r -= 1
 
     def render(self, renderer: Renderer) -> None:
-        if self.rerender:
-            rect = self.get_rect()
-            active_r, inactive_r, gap, total_w = self._compute_layout(rect)
+        if not self.rerender:
+            return
+        
+        rect = self.get_rect()
+        active_r, inactive_r, gap, total_w = self._compute_layout(rect)
 
-            center_y = rect.y + rect.h // 2
-            cursor_x = rect.x + (rect.w - total_w) // 2
+        center_y = rect.y + rect.h // 2
+        cursor_x = rect.x + (rect.w - total_w) // 2
 
-            for page in range(1, self.pages + 1):
-                if page == self.active_page:
-                    r, style = active_r, self.active_style
-                else:
-                    r, style = inactive_r, self.inactive_style
+        for page in range(1, self.pages + 1):
+            if page == self.active_page:
+                r, style = active_r, self.active_style
+            else:
+                r, style = inactive_r, self.inactive_style
 
-                renderer.draw_circle(Point(cursor_x + r, center_y), r, style)
-                cursor_x += 2 * r + gap
-            self.rerender = False
+            renderer.draw_circle(Point(cursor_x + r, center_y), r, style)
+            cursor_x += 2 * r + gap
+        self.rerender = False
