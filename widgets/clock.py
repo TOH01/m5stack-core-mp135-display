@@ -52,7 +52,7 @@ class Clock(Container):
 
         self.hour_widget = self._make_label(hour, 0, 20)
         self.sep_widget = self._make_label(":", 22, 6)
-        self.min_widget = self._make_label(minute, 32, 20)
+        self.min_widget = self._make_label(minute, 30, 20)
 
         self.add_widget(self.hour_widget)
         self.add_widget(self.sep_widget)

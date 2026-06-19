@@ -16,6 +16,10 @@ class Direction(Enum):
 class TextPreset(Enum):
     HEADING = "heading"
     BODY    = "body"
+    VALUE   = "value"
+    DISPLAY = "display"
+    SUBHEAD = "subhead"
+    ICON    = "icon"
 
 
 class TextAlignment(Enum):

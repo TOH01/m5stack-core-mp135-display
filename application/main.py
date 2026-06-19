@@ -3,9 +3,10 @@ from application.application import Application
 from application.timer_event import TimerEvent
 from driver.display import Display
 from driver.input_manager import InputManager
-from structures.dataclasses import PressEvent, Rect, SwipeEvent
+from structures.dataclasses import PressEvent, Rect, SensorReading, SwipeEvent
 from structures.enums import Direction
 from structures.menu import Menu
+from widgets.air_quality_menu import AirQualityMenu
 from widgets.bottom_bar import BottomBar
 from widgets.container import Container
 from widgets.label import Label
@@ -19,7 +20,7 @@ FULL_BRIGHTNESS    = 100
 CONTENT_W = theme.Spacing.SCREEN_W
 CONTENT_H = theme.Spacing.SCREEN_H - 2 * theme.Spacing.BAR_HEIGHT
 
-MENU_TITLES = ["Home", "Sensors", "Network", "Settings"]
+MENU_TITLES = ["Air Quality", "Sensors", "Network", "Settings"]
 
 app: Application
 dim_timer: TimerEvent
@@ -66,7 +67,11 @@ def setup(application: Application) -> None:
 
     top_bar = TopBar()
     menu_manager = MenuManager(Rect(0, theme.Spacing.BAR_HEIGHT, CONTENT_W, CONTENT_H), theme.menu_background_style())
-    for slot, title in enumerate(MENU_TITLES):
+
+    air_quality = AirQualityMenu(Rect(0, 0, CONTENT_W, CONTENT_H))
+    air_quality.set_reading(SensorReading(temperature_c=23.4, humidity=45, iaq=32, co2_ppm=812))
+    menu_manager.register_menu(MENU_TITLES[0], air_quality)
+    for slot, title in enumerate(MENU_TITLES[1:], start=1):
         menu_manager.register_menu(title, build_menu(title, slot))
     bottom_bar = BottomBar(len(MENU_TITLES))
 

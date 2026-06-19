@@ -66,6 +66,21 @@ class LineStyle:
 
 
 @dataclass
+class Band:
+    color: Color
+    lower: float
+    label: str
+
+
+@dataclass
+class SensorReading:
+    temperature_c: float
+    humidity: int
+    iaq: int
+    co2_ppm: int
+
+
+@dataclass
 class PressEvent:
     point: Point
 

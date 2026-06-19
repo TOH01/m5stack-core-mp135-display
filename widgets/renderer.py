@@ -11,8 +11,12 @@ from structures.enums import TextAlignment, TextPreset
 FONT_DIR = Path(__file__).parent.parent / "fonts"
 
 FONT_MAP = {
-    TextPreset.HEADING: ImageFont.truetype(str(FONT_DIR / "DejaVuSans-Bold.ttf"), 13),
+    TextPreset.HEADING: ImageFont.truetype(str(FONT_DIR / "DejaVuSans-Bold.ttf"), 14),
     TextPreset.BODY: ImageFont.truetype(str(FONT_DIR / "DejaVuSans.ttf"), 11),
+    TextPreset.VALUE: ImageFont.truetype(str(FONT_DIR / "DejaVuSans.ttf"), 22),
+    TextPreset.DISPLAY: ImageFont.truetype(str(FONT_DIR / "DejaVuSans-Bold.ttf"), 58),
+    TextPreset.SUBHEAD: ImageFont.truetype(str(FONT_DIR / "DejaVuSans.ttf"), 16),
+    TextPreset.ICON: ImageFont.truetype(str(FONT_DIR / "MaterialSymbolsRounded.ttf"), 28),
 }
 
 SUPERSAMPLE = 4
