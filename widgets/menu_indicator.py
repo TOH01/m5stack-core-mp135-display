@@ -5,16 +5,12 @@ from widgets.widget import Widget
 
 
 class MenuIndicator(Widget):
-    INACTIVE_RATIO = 0.7
-    GAP_RATIO = 1.0
-    MIN_RADIUS = 1
-
-    def __init__(self, rect: Rect, pages: int, background: Color = theme.Palette.SURFACE, active_style: CircleStyle | None = None, inactive_style: CircleStyle | None = None) -> None:
+    def __init__(self, rect: Rect, pages: int, background: Color = theme.Palette.SURFACE, active_style: RectStyle | None = None, inactive_style: CircleStyle | None = None) -> None:
         super().__init__(rect)
         self.pages = pages
         self.active_page = 1
         self.background = background
-        self.active_style = active_style or CircleStyle(fill=theme.Palette.ACCENT)
+        self.active_style = active_style or RectStyle(fill=theme.Palette.ACCENT)
         self.inactive_style = inactive_style or CircleStyle(fill=theme.Palette.MUTED)
 
     def set_active_page(self, active_page: int) -> None:
@@ -24,35 +20,36 @@ class MenuIndicator(Widget):
         self.rerender = True
 
     def _compute_layout(self, rect: Rect) -> tuple[int, int, int, int]:
-        active_r = max(self.MIN_RADIUS, rect.h // 2)
+        dot_r = max(theme.Indicator.MIN_RADIUS, round((rect.h // 2) * theme.Indicator.DOT_RATIO))
 
         while True:
-            inactive_r = max(self.MIN_RADIUS, round(active_r * self.INACTIVE_RATIO))
-            gap = max(2, round(active_r * self.GAP_RATIO))
-            total_w = 2 * active_r + (self.pages - 1) * (2 * inactive_r + gap)
+            dot_d = 2 * dot_r + 1
+            pill_w = max(dot_d, round(dot_d * theme.Indicator.PILL_RATIO))
+            gap = max(2, round(dot_r * theme.Indicator.GAP_RATIO))
+            total_w = pill_w + (self.pages - 1) * (dot_d + gap)
 
-            if total_w <= rect.w or active_r <= self.MIN_RADIUS:
-                return active_r, inactive_r, gap, total_w
+            if total_w <= rect.w or dot_r <= theme.Indicator.MIN_RADIUS:
+                return dot_r, pill_w, gap, total_w
 
-            active_r -= 1
+            dot_r -= 1
 
     def render(self, renderer: Renderer) -> None:
         if not self.rerender:
             return
-        
+
         rect = self.get_rect()
         renderer.draw_rect(rect, RectStyle(fill=self.background))
-        active_r, inactive_r, gap, total_w = self._compute_layout(rect)
+        dot_r, pill_w, gap, total_w = self._compute_layout(rect)
 
+        dot_d = 2 * dot_r + 1
         center_y = rect.y + rect.h // 2
         cursor_x = rect.x + (rect.w - total_w) // 2
 
         for page in range(1, self.pages + 1):
             if page == self.active_page:
-                r, style = active_r, self.active_style
+                renderer.draw_pill(Rect(cursor_x, center_y - dot_r, pill_w, dot_d), self.active_style)
+                cursor_x += pill_w + gap
             else:
-                r, style = inactive_r, self.inactive_style
-
-            renderer.draw_circle(Point(cursor_x + r, center_y), r, style)
-            cursor_x += 2 * r + gap
+                renderer.draw_circle(Point(cursor_x + dot_r, center_y), dot_r, self.inactive_style)
+                cursor_x += dot_d + gap
         self.rerender = False

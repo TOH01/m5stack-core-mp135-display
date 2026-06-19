@@ -15,7 +15,9 @@ FONT_MAP = {
     TextPreset.BODY: ImageFont.truetype(str(FONT_DIR / "DejaVuSans.ttf"), 11),
 }
 
-CIRCLE_SUPERSAMPLE = 4
+SUPERSAMPLE = 4
+CIRCLE_SUPERSAMPLE = SUPERSAMPLE
+PILL_SUPERSAMPLE = SUPERSAMPLE
 
 
 class Renderer:
@@ -43,6 +45,18 @@ class Renderer:
         self.canvas.paste(tile, pos, tile)
 
         self.dirty_regions.append(Rect(center.x - radius, center.y - radius, d, d))
+
+    def draw_pill(self, rect: Rect, style: RectStyle) -> None:
+        big_w, big_h = rect.w * PILL_SUPERSAMPLE, rect.h * PILL_SUPERSAMPLE
+        tile = Image.new("RGBA", (big_w, big_h), (0, 0, 0, 0))
+        tile_draw = ImageDraw.Draw(tile)
+        tile_draw.rounded_rectangle((0, 0, big_w - 1, big_h - 1), radius=big_h // 2, fill=(*style.fill, 255), outline=(*style.outline, 255) if style.outline else None, width=style.outline_width * PILL_SUPERSAMPLE)
+
+        tile = tile.resize((rect.w, rect.h), Image.LANCZOS)
+
+        self.canvas.paste(tile, (rect.x, rect.y), tile)
+
+        self.dirty_regions.append(rect)
 
     def draw_line(self, start: Point, end: Point, style: LineStyle) -> None:
         self.draw.line((start.x, start.y, end.x, end.y), fill=style.color, width=style.width)

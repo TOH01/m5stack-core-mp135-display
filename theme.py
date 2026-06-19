@@ -19,6 +19,13 @@ class Spacing:
     OVERLAY_RADIUS = 8
 
 
+class Indicator:
+    DOT_RATIO  = 0.7
+    PILL_RATIO = 3.0
+    GAP_RATIO  = 2.0
+    MIN_RADIUS = 1
+
+
 def surface_style() -> ContainerStyle:
     return ContainerStyle(RectStyle(Palette.SURFACE))
 
