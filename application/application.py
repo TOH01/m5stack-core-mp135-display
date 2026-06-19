@@ -11,13 +11,13 @@ from widgets.widget import Widget
 
 
 class Application:
-    def __init__(self, display: Display, input_manager: InputManager, refresh_interval_s: float = 0.05) -> None:
+    def __init__(self, display: Display, input_manager: InputManager, target_fps: float = 60.0) -> None:
         self.stop = False
         self.display = display
         self.renderer = Renderer(self.display)
         self.input_manager = input_manager
         self.input_manager.start()
-        self.refresh_interval_s = refresh_interval_s
+        self.frame_interval_s = 1.0 / target_fps
         self.swipe_callback: Callable | None = None
         self.click_notifier: Callable | None = None
         self.root = Container(Rect(0, 0, self.display.width, self.display.height), ContainerStyle(RectStyle()))
@@ -40,8 +40,10 @@ class Application:
 
     def main_loop(self) -> None:
         while not self.stop:
+            frame_start = time.monotonic()
             self._execute()
-            time.sleep(self.refresh_interval_s)
+            elapsed = time.monotonic() - frame_start
+            time.sleep(max(0.0, self.frame_interval_s - elapsed))
 
     def _execute(self) -> None:
         input_event = self.input_manager.poll()

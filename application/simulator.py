@@ -72,7 +72,7 @@ if __name__ == "__main__":
         app.renderer.canvas.save(ppm, format="PPM")
         photo[0] = tk.PhotoImage(data=ppm.getvalue())
         tk_canvas.create_image(0, 0, anchor=tk.NW, image=photo[0])
-        root.after(int(app.refresh_interval_s * 1000), tick)
+        root.after(int(app.frame_interval_s * 1000), tick)
 
     tick()
     root.mainloop()
