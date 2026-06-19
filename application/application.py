@@ -47,7 +47,17 @@ class Application:
 
     def _execute(self) -> None:
         input_event = self.input_manager.poll()
+        while input_event is not None:
+            self._handle_input(input_event)
+            input_event = self.input_manager.poll()
 
+        self.root.check_timers()
+
+        self.root.render(self.renderer)
+
+        self.renderer.update()
+
+    def _handle_input(self, input_event: PressEvent | SwipeEvent) -> None:
         if isinstance(input_event, PressEvent):
             if self.click_notifier:
                 self.click_notifier(input_event)
@@ -55,9 +65,3 @@ class Application:
         if isinstance(input_event, SwipeEvent):
             if self.swipe_callback:
                 self.swipe_callback(input_event)
-
-        self.root.check_timers()
-
-        self.root.render(self.renderer)
-
-        self.renderer.update()

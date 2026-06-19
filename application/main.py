@@ -13,7 +13,7 @@ from widgets.menu_manager import MenuManager
 from widgets.top_bar import TopBar
 
 DISPLAY_TIMEOUT_MS = 5 * 60 * 1000
-DIM_BRIGHTNESS     = 40
+DIM_BRIGHTNESS     = 30
 FULL_BRIGHTNESS    = 100
 
 CONTENT_W = theme.Spacing.SCREEN_W
