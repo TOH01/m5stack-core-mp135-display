@@ -11,7 +11,7 @@ from structures.enums import TouchEvent
 
 
 class InputManager:
-    def __init__(self, device_path: Path = constants.INPUT_DEVICE_PATH, swipe_threshold: int = 30) -> None:
+    def __init__(self, device_path: Path = constants.INPUT_DEVICE_PATH, swipe_threshold: int = 20) -> None:
         self.device = InputDevice(device_path)
         self.swipe_threshold = swipe_threshold
         self.events: deque[SwipeEvent | PressEvent] = deque(maxlen=32)
