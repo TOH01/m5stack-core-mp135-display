@@ -43,7 +43,7 @@ class Icon:
 
 DEFAULT_BAND = Band(Palette.ACCENT, 0, "--")
 
-CO2_BANDS = [Band(Palette.GOOD, 0, "FRESH"), Band(Palette.MODERATE, 800, "FAIR"), Band(Palette.POOR, 1200, "VENTILATE"), Band(Palette.BAD, 2000, "VENTILATE!")]
+CO2_BANDS = [Band(Palette.GOOD, 0, "FRESH"), Band(Palette.MODERATE, 800, "fair"), Band(Palette.POOR, 1200, "VENTILATE"), Band(Palette.BAD, 2000, "VENTILATE!")]
 
 WEATHER_ICONS = {
     WeatherCondition.CLEAR:         [IconLayer(Icon.SUN, Palette.SUN, 1.0, 0.0, 0.0)],
@@ -81,9 +81,6 @@ class Indicator:
     GAP_RATIO  = 2.0
     MIN_RADIUS = 1
 
-
-def surface_style() -> ContainerStyle:
-    return ContainerStyle(RectStyle(Palette.SURFACE))
 
 def overlay_style() -> ContainerStyle:
     return ContainerStyle(RectStyle(Palette.OVERLAY, radius=Spacing.OVERLAY_RADIUS))

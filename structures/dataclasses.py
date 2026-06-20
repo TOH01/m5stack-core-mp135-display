@@ -102,8 +102,8 @@ class WeatherReading:
     temperature_c: float
     condition: WeatherCondition
     feels_like_c: float
-    hourly: list[ForecastEntry]
-    daily: list[ForecastEntry]
+    hourly: ForecastEntry
+    daily: ForecastEntry
 
 
 @dataclass

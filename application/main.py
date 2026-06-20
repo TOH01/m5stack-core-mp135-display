@@ -44,8 +44,8 @@ def build_menu(title: str, slot: int) -> Container:
 
 
 def sample_weather() -> WeatherReading:
-    hourly = [ForecastEntry("15h", WeatherCondition.CLEAR, 21), ForecastEntry("18h", WeatherCondition.RAIN, 15)]
-    daily  = [ForecastEntry("Today", WeatherCondition.PARTLY_CLOUDY, 24), ForecastEntry("Thu", WeatherCondition.THUNDERSTORM, 19)]
+    hourly = ForecastEntry("15h", WeatherCondition.CLEAR, 21)
+    daily  = ForecastEntry("Tue", WeatherCondition.PARTLY_CLOUDY, 24)
     return WeatherReading(temperature_c=19.0, condition=WeatherCondition.PARTLY_CLOUDY, feels_like_c=17.0, hourly=hourly, daily=daily)
 
 
