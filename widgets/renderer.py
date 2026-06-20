@@ -5,7 +5,15 @@ from PIL import Image, ImageDraw, ImageFont
 
 import widgets.utils as utils
 from driver.display import Display
-from structures.dataclasses import CircleStyle, LineStyle, Point, Rect, RectStyle, TextStyle
+from structures.dataclasses import (
+    CircleStyle,
+    Color,
+    IconLayer,
+    LabelStyle,
+    Point,
+    Rect,
+    RectStyle,
+)
 from structures.enums import TextAlignment, TextPreset
 
 FONT_DIR = Path(__file__).parent.parent / "fonts"
@@ -17,11 +25,15 @@ FONT_MAP = {
     TextPreset.DISPLAY: ImageFont.truetype(str(FONT_DIR / "DejaVuSans-Bold.ttf"), 58),
     TextPreset.SUBHEAD: ImageFont.truetype(str(FONT_DIR / "DejaVuSans.ttf"), 16),
     TextPreset.ICON: ImageFont.truetype(str(FONT_DIR / "MaterialSymbolsRounded.ttf"), 28),
+    TextPreset.ICON_MEDIUM: ImageFont.truetype(str(FONT_DIR / "MaterialSymbolsRounded.ttf"), 22),
+    TextPreset.ICON_LARGE: ImageFont.truetype(str(FONT_DIR / "MaterialSymbolsRounded.ttf"), 64),
 }
 
 SUPERSAMPLE = 4
 CIRCLE_SUPERSAMPLE = SUPERSAMPLE
 PILL_SUPERSAMPLE = SUPERSAMPLE
+
+ICON_GRADE, ICON_OPTICAL, ICON_WEIGHT = 0, 24, 400  # match the default (outline) instance used by FONT_MAP icons
 
 
 class Renderer:
@@ -62,16 +74,11 @@ class Renderer:
 
         self.dirty_regions.append(rect)
 
-    def draw_line(self, start: Point, end: Point, style: LineStyle) -> None:
-        self.draw.line((start.x, start.y, end.x, end.y), fill=style.color, width=style.width)
-        half_w = style.width // 2
-        x = min(start.x, end.x) - half_w
-        y = min(start.y, end.y) - half_w
-        w = abs(end.x - start.x) + style.width
-        h = abs(end.y - start.y) + style.width
-        self.dirty_regions.append(Rect(x, y, w, h))
+    def _get_clip_draw(self, rect: Rect, bg: Color) -> tuple[Image.Image, ImageDraw.ImageDraw]:
+        img = Image.new("RGB", (rect.w, rect.h), (18, 18, 20))
+        return img, ImageDraw.Draw(img)
 
-    def draw_text(self, rect: Rect, text: str, style: TextStyle) -> None:
+    def draw_text(self, rect: Rect, text: str, style: LabelStyle) -> None:
         font = FONT_MAP[style.preset]
         text_w = font.getlength(text)
 
@@ -82,16 +89,33 @@ class Renderer:
             text_w = font.getlength(text)
 
         if style.alignment == TextAlignment.LEFT:
-            x = rect.x
+            x = 0
         elif style.alignment == TextAlignment.CENTER:
-            x = rect.x + int((rect.w - text_w) // 2)
+            x = int((rect.w - text_w) // 2)
         else:
-            x = rect.x + int(rect.w - text_w)
+            x = int(rect.w - text_w)
 
         ascent, descent = font.getmetrics()
-        y = rect.y + (rect.h - (ascent + descent)) // 2
+        text_h = ascent + descent
 
-        self.draw.text((x, y), text, fill=style.color, font=font)
+        y = int((rect.h - text_h) // 2)
+
+        clip_img, clip_draw = self._get_clip_draw(rect, style.bg)
+        clip_draw.text((x, y), text, fill=style.color, font=font)
+        self.canvas.paste(clip_img, (rect.x, rect.y))
+
+        self.dirty_regions.append(rect)
+
+    def draw_icon(self, rect: Rect, layers: list[IconLayer], bg: Color) -> None:
+        clip_img, clip_draw = self._get_clip_draw(rect, bg)
+        cx = rect.w / 2
+        cy = rect.h / 2
+        base = min(rect.w, rect.h)
+        for layer in layers:
+            font = ImageFont.truetype(str(FONT_DIR / "MaterialSymbolsRounded.ttf"), max(1, int(base * layer.scale)))
+            font.set_variation_by_axes([layer.fill, ICON_GRADE, ICON_OPTICAL, ICON_WEIGHT])
+            clip_draw.text((cx + base * layer.dx, cy + base * layer.dy), chr(layer.codepoint), font=font, fill=layer.color, anchor="mm")
+        self.canvas.paste(clip_img, (rect.x, rect.y))
         self.dirty_regions.append(rect)
 
     def update(self) -> None:

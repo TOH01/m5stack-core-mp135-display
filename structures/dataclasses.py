@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from typing import NamedTuple
 
-from structures.enums import Direction, TextAlignment, TextPreset
+from structures.enums import Direction, TextAlignment, TextPreset, WeatherCondition
 
 
 class Color(NamedTuple):
@@ -78,6 +78,32 @@ class SensorReading:
     humidity: int
     iaq: int
     co2_ppm: int
+
+
+@dataclass
+class IconLayer:
+    codepoint: int
+    color: Color
+    scale: float
+    dx: float
+    dy: float
+    fill: bool = False
+
+
+@dataclass
+class ForecastEntry:
+    label: str
+    condition: WeatherCondition
+    temperature_c: float
+
+
+@dataclass
+class WeatherReading:
+    temperature_c: float
+    condition: WeatherCondition
+    feels_like_c: float
+    hourly: list[ForecastEntry]
+    daily: list[ForecastEntry]
 
 
 @dataclass

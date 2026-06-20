@@ -1,4 +1,4 @@
-from structures.dataclasses import Color, LabelStyle, Rect, RectStyle, TextStyle
+from structures.dataclasses import Color, LabelStyle, Rect
 from widgets.renderer import Renderer
 from widgets.widget import Widget
 
@@ -12,8 +12,7 @@ class Label(Widget):
     def render(self, renderer: Renderer) -> None:
         if self.rerender:
             rect = self.get_rect()
-            renderer.draw_rect(rect, RectStyle(fill=self.style.bg))
-            renderer.draw_text(rect, self.text, TextStyle(color=self.style.color, preset=self.style.preset, alignment=self.style.alignment))
+            renderer.draw_text(rect, self.text, self.style)
             self.rerender = False
 
     def update_text(self, text: str , color: Color | None = None) -> None:
