@@ -76,7 +76,6 @@ class Band:
 class SensorReading:
     temperature_c: float
     humidity: int
-    iaq: int
     co2_ppm: int
 
 

@@ -24,9 +24,6 @@ class OutdoorWeatherMenu(Container):
                        self.caption_low_left, self.text_low_left, self.caption_low_right, self.text_low_right):
             self.add_widget(widget)
 
-        self._hourly: list[ForecastEntry] = []
-        self._daily: list[ForecastEntry]  = []
-
     def set_forecast_left(self, forecast: ForecastEntry):
         self.icon_low_left.update_icon(theme.weather_icon_layers(forecast.condition))
         self.caption_low_left.update_text(forecast.label)

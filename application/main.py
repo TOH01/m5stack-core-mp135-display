@@ -1,17 +1,12 @@
 import theme
 from application.application import Application
+from application.indoor_air_data import IndoorAirData
 from application.timer_event import TimerEvent
+from application.weather_data import WeatherData
 from driver.display import Display
 from driver.input_manager import InputManager
-from structures.dataclasses import (
-    ForecastEntry,
-    PressEvent,
-    Rect,
-    SensorReading,
-    SwipeEvent,
-    WeatherReading,
-)
-from structures.enums import Direction, WeatherCondition
+from structures.dataclasses import PressEvent, Rect, SwipeEvent
+from structures.enums import Direction
 from structures.menu import Menu
 from widgets.air_quality_menu import AirQualityMenu
 from widgets.bottom_bar import BottomBar
@@ -28,26 +23,23 @@ FULL_BRIGHTNESS    = 100
 CONTENT_W = theme.Spacing.SCREEN_W
 CONTENT_H = theme.Spacing.SCREEN_H - 2 * theme.Spacing.BAR_HEIGHT
 
-MENU_TITLES = ["Air Quality", "Outdoor", "Network", "Settings"]
+MENU_TITLES = ["Air Quality", "Outdoor", "Power", "System"]
 
 app: Application
 dim_timer: TimerEvent
 top_bar: TopBar
 bottom_bar: BottomBar
 menu_manager: MenuManager
+weather_data: WeatherData
+indoor_air_data: IndoorAirData
+outdoor: OutdoorWeatherMenu
+air_quality: AirQualityMenu
 
 
 def build_menu(title: str, slot: int) -> Container:
     container = Container(Rect(0, 0, CONTENT_W, CONTENT_H), theme.transparent_container_style())
     container.add_widget(Label(Rect((CONTENT_W - 160) // 2, 20 + slot * 35, 160, 24), title, theme.content_text_style()))
     return container
-
-
-def sample_weather() -> WeatherReading:
-    hourly = ForecastEntry("15h", WeatherCondition.CLEAR, 21)
-    daily  = ForecastEntry("Tue", WeatherCondition.PARTLY_CLOUDY, 24)
-    return WeatherReading(temperature_c=19.0, condition=WeatherCondition.PARTLY_CLOUDY, feels_like_c=17.0, hourly=hourly, daily=daily)
-
 
 def show_menu(menu: Menu) -> None:
     top_bar.update_title(menu.title)
@@ -56,6 +48,14 @@ def show_menu(menu: Menu) -> None:
 
 def on_dim_timeout() -> None:
     app.display.set_brightness(DIM_BRIGHTNESS)
+
+
+def on_data_timer() -> None:
+    data = weather_data.get_data()
+    outdoor.set_reading(data)
+
+    data = indoor_air_data.get_data()
+    air_quality.set_reading(data)
 
 
 def on_click(click_event: PressEvent) -> None:
@@ -74,24 +74,29 @@ def on_swipe(swipe_event: SwipeEvent) -> None:
 
 
 def setup(application: Application) -> None:
-    global app, dim_timer, top_bar, bottom_bar, menu_manager
+    global app, dim_timer, top_bar, bottom_bar, menu_manager, weather_data, indoor_air_data, outdoor, air_quality
     app = application
     dim_timer = TimerEvent(DISPLAY_TIMEOUT_MS, on_dim_timeout)
     app.register_timer(dim_timer)
+
+    data_timer = TimerEvent(1000, on_data_timer)
+    app.register_timer(data_timer)
 
     top_bar = TopBar()
     menu_manager = MenuManager(Rect(0, theme.Spacing.BAR_HEIGHT, CONTENT_W, CONTENT_H), theme.menu_background_style())
 
     air_quality = AirQualityMenu(Rect(0, 0, CONTENT_W, CONTENT_H))
-    air_quality.set_reading(SensorReading(temperature_c=-23.4, humidity=100, iaq=32, co2_ppm=812))
     menu_manager.register_menu(MENU_TITLES[0], air_quality)
 
+    indoor_air_data = IndoorAirData()
+    indoor_air_data.start()
+
     outdoor = OutdoorWeatherMenu(Rect(0, 0, CONTENT_W, CONTENT_H))
-    outdoor.set_reading(sample_weather())
     menu_manager.register_menu(MENU_TITLES[1], outdoor)
 
-    for slot, title in enumerate(MENU_TITLES[2:], start=2):
-        menu_manager.register_menu(title, build_menu(title, slot))
+    weather_data = WeatherData()
+    weather_data.start()
+
     bottom_bar = BottomBar(len(MENU_TITLES))
 
     app.register_widget(top_bar)
