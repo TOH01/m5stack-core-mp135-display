@@ -51,11 +51,14 @@ def on_dim_timeout() -> None:
 
 
 def on_data_timer() -> None:
-    data = weather_data.get_data()
-    outdoor.set_reading(data)
+    if menu_manager.active_idx == 1 and weather_data.new_data:
+        weather_data.new_data = False
+        data = weather_data.get_data()
+        outdoor.set_reading(data)
 
-    data = indoor_air_data.get_data()
-    air_quality.set_reading(data)
+    if menu_manager.active_idx == 0:
+        data = indoor_air_data.get_data()
+        air_quality.set_reading(data)
 
 
 def on_click(click_event: PressEvent) -> None:

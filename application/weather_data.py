@@ -31,11 +31,13 @@ class WeatherData(threading.Thread):
         self.feels_like_c = 0
         self.hourly = ForecastEntry("", WeatherCondition.CLOUDY, 0)
         self.daily = ForecastEntry("", WeatherCondition.CLOUDY, 0)
+        self.new_data = True
  
     def run(self):
         while True:
             try:
                 self._fetch()
+                self.new_data = True
             except Exception:
                 pass
             time.sleep(300)
