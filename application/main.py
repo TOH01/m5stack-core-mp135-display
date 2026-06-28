@@ -70,6 +70,14 @@ def on_swipe(swipe_event: SwipeEvent) -> None:
     dim_timer.reset()
     app.display.set_brightness(FULL_BRIGHTNESS)
 
+    if weather_data.new_data:
+        weather_data.new_data = False
+        data = weather_data.get_data()
+        outdoor.set_reading(data)
+
+    data = indoor_air_data.get_data()
+    air_quality.set_reading(data)
+
     if swipe_event.direction == Direction.LEFT:
         show_menu(menu_manager.next())
     elif swipe_event.direction == Direction.RIGHT:
